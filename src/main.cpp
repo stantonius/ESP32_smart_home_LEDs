@@ -72,6 +72,13 @@ void rainbow(int wait)
   }
 }
 
+void mellow(uint32_t colour)
+{
+  for (int i = 0; i < pixels.numPixels(); i++)
+  {
+  }
+}
+
 // Rainbow-enhanced theater marquee. Pass delay time (in ms) between frames.
 void theaterChaseRainbow(int wait)
 {

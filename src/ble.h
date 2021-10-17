@@ -86,7 +86,15 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                         }
                         // xQueueSend(isCloseQueue, &isCloseVal, portMAX_DELAY);
                     }
+                    else
+                    {
+                        isCloseVal = false;
+                    }
                 }
+            }
+            else
+            {
+                isCloseVal = false;
             }
             return;
         }

@@ -25,7 +25,7 @@ CRGBPalette16 myPal = bhw1_01_gp;
 
 void lightSetups()
 {
-    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS).setCorrection(0xFFB0F0);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setCorrection(TypicalPixelString);
     FastLED.setTemperature(FullSpectrumFluorescent);
@@ -64,7 +64,7 @@ void lighter(bool show)
         {
 
             // Create a new HSV color for led[0]
-            leds[0] = CRGB::Orange;
+            leds[0] = CRGB::DarkOrange;
             // Copy each pixel to the next one, starting at the far end
             // thereby 'moving' the pattern along the strip
             for (int i = NUM_LEDS - 1; i > 0; i--)

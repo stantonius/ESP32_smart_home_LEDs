@@ -2,7 +2,7 @@
 
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
-#include <wifi.h>
+#include <wifi_connector.h>
 
 const char *mqtt_server = "10.0.0.54";
 const int mqtt_port = 1883;

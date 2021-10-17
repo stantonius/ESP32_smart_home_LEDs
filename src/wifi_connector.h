@@ -1,7 +1,7 @@
 #pragma once
 
-#include <WiFi.h>
 #include <credentials.h>
+#include <WiFi.h>
 
 #define MINUTES_BETWEEN 1
 

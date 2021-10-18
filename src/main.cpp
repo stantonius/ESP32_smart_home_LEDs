@@ -3,7 +3,7 @@
 #include <iostream>
 #include <lights.h>
 #include <ble.h>
-#include <wifi.h>
+#include <wifi_connector.h>
 #include <mqtt.h>
 
 /**

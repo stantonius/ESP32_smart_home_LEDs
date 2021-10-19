@@ -23,6 +23,15 @@ void codeForTaskRunBLEChecks(void *parameter)
             // Start scan with: duration = 0 seconds(forever), no scan end callback, not a continuation of a previous scan.
             doBLEScans(pBLEScan);
         }
+
+        // if (beaconReadingsQueue.sum() == 0)
+        // {
+        //     if (isCloseVal)
+        //     {
+        //         isCloseVal = !isCloseVal;
+        //     }
+        //     LOG("TRIGGERED");
+        // }
     }
 }
 
@@ -30,9 +39,6 @@ void codeForTaskFastLED(void *parameter)
 {
     for (;;)
     {
-        // bool isCloseVal;
-        // xQueueReceive(isCloseQueue, &isCloseVal, portMAX_DELAY);
-
         lighter(isCloseVal);
     }
 }
@@ -43,7 +49,7 @@ void setup()
 
     setup_wifi();
     client.setServer(mqtt_server, mqtt_port);
-    client.setCallback(callback);
+    // client.setCallback(callback);
 
     if (!client.connected())
     {
@@ -79,10 +85,5 @@ void setup()
 
 void loop()
 {
-    //     doBLEScans(pBLEScan);
-    //     if (pBLEScan->isScanning() == false)
-    //     {
-    //         // Start scan with: duration = 0 seconds(forever), no scan end callback, not a continuation of a previous scan.
-    //         doBLEScans(pBLEScan);
-    //     }
+    // Not needed with the multithreading
 }

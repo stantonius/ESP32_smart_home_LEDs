@@ -5,6 +5,7 @@
 #include <NimBLEDevice.h>
 #include "NimBLEBeacon.h"
 #include <sstream>
+#include "queue_custom.h"
 
 using namespace std;
 
@@ -18,6 +19,7 @@ NimBLEScan *pBLEScan;
 QueueHandle_t isCloseQueue;
 
 bool isCloseVal = 0;
+BeaconQueue beaconReadingsQueue;
 
 /*
 * Code taken from:
@@ -27,30 +29,31 @@ bool isCloseVal = 0;
 https://github.com/h2zero/NimBLE-Arduino/blob/master/examples/BLE_Beacon_Scanner/BLE_Beacon_Scanner.ino
 */
 
-int scanTime = 10;
+int scanTime = 5;
 #define SERVICE_UUID "c8c706b9-879a-4682-ba7f-56346f4d800e"
 
 static NimBLEUUID dataUuid(SERVICE_UUID);
-// static NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
-// static uint32_t counter = 0;
+
+void deviceSorter()
+{
+}
 
 class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
 {
     void onResult(NimBLEAdvertisedDevice *advertisedDevice)
     {
-        if (advertisedDevice->haveName())
-        {
-            Serial.print("Device name: ");
-            Serial.println(advertisedDevice->getName().c_str());
-            Serial.println("");
-        }
+
+        // store whether ibeacon was found and return result at end of callback
+        // only when a beacon was recently
+
+        // int beaconPresent = 0;
 
         if (advertisedDevice->haveServiceUUID())
         {
-            BLEUUID devUUID = advertisedDevice->getServiceUUID();
-            Serial.print("Found ServiceUUID: ");
-            Serial.println(devUUID.toString().c_str());
-            Serial.println("");
+            // BLEUUID devUUID = advertisedDevice->getServiceUUID();
+            // Serial.print("Found ServiceUUID: ");
+            // Serial.println(devUUID.toString().c_str());
+            // Serial.println("");
         }
         else
         {
@@ -78,6 +81,7 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                             {
                                 isCloseVal = true;
                             }
+                            // beaconPresent = 1;
                         }
                         else
                         {
@@ -86,16 +90,9 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                         }
                         // xQueueSend(isCloseQueue, &isCloseVal, portMAX_DELAY);
                     }
-                    else
-                    {
-                        isCloseVal = false;
-                    }
                 }
             }
-            else
-            {
-                isCloseVal = false;
-            }
+            // beaconReadingsQueue.add(beaconPresent);
             return;
         }
     };

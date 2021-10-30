@@ -11,7 +11,7 @@ using namespace std;
 
 #define LOG(x) cout << x << endl
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
-#define rssiThreshold -90
+#define rssiThreshold -100
 
 NimBLEScan *pBLEScan;
 

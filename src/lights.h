@@ -4,7 +4,7 @@
 // How many leds in your pixels?
 #define NUM_LEDS 68
 #define DATA_PIN 33
-#define BRIGHTNESS 50
+#define BRIGHTNESS 125
 
 CRGB leds[NUM_LEDS];
 uint8_t paletteIndex = 0;

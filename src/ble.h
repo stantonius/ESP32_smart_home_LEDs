@@ -66,26 +66,26 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
 
                 if (strManufacturerData.length() == 25 && cManufacturerData[0] == 0x4C && cManufacturerData[1] == 0x00)
                 {
-                    Serial.println("Found an iBeacon!");
+                    // Serial.println("Found an iBeacon!");
                     BLEBeacon oBeacon = BLEBeacon();
                     oBeacon.setData(strManufacturerData);
-                    Serial.printf("iBeacon Frame\n");
-                    Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
-                    Serial.printf("RSSI: %i", advertisedDevice->getRSSI());
+                    // Serial.printf("iBeacon Frame\n");
+                    // Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
+                    // Serial.printf("RSSI: %i", advertisedDevice->getRSSI());
                     if (oBeacon.getProximityUUID().toString() == SERVICE_UUID)
                     {
                         if (advertisedDevice->getRSSI() > rssiThreshold)
                         {
-                            if (!isCloseVal)
-                            {
-                                isCloseVal = true;
-                            }
+                            // if (!isCloseVal)
+                            // {
+                            //     isCloseVal = true;
+                            // }
                             beaconPresent = 1;
                         }
-                        else
-                        {
-                            isCloseVal = false;
-                        }
+                        // else
+                        // {
+                        //     isCloseVal = false;
+                        // }
                     }
                 }
             }
@@ -127,18 +127,18 @@ void doBLEScans(NimBLEScan *pScan)
     if (scanResults.find(1) != scanResults.end())
     {
         deviceProximityHolder.add(1);
-        Serial.println("Beacon presence recorded");
+        // Serial.println("Beacon presence recorded");
     }
     else
     {
         deviceProximityHolder.add(0);
-        Serial.println("No beacon presence recorded");
+        // Serial.println("No beacon presence recorded");
     };
 
-    Serial.print("Devices found: ");
-    Serial.println(foundDevices.getCount());
-    Serial.println("THE SUM IS: ");
-    Serial.println(scanResults.size());
+    // Serial.print("Devices found: ");
+    // Serial.println(foundDevices.getCount());
+    // Serial.println("THE SUM IS: ");
+    // Serial.println(scanResults.size());
 
     // non-zero devices found
     pScan->clearResults(); // delete results fromBLEScan buffer to release memory

@@ -33,16 +33,17 @@ void reconnect()
         {
             Serial.print("Attempting MQTT connection...");
             // Create a random client ID
-            String clientId = "ESP8266Client-";
+            String clientId = "ESP32Client-";
             clientId += String(random(0xffff), HEX);
             // Attempt to connect
             if (client.connect(clientId.c_str()))
             {
                 Serial.println("connected");
-                // Once connected, publish an announcement...
-                client.publish("LIGHTSENSOR/status", "booted");
-                // ... and resubscribe
-                client.subscribe("inTopic");
+                client.setKeepAlive(90);
+                // Once connected, subscribe to the topics from NodeRed that will configure how the lights will operate...
+                client.subscribe("Lights/status");
+                client.subscribe("Lights/brightness");
+                client.subscribe("Lights/mood");
                 reconnect_count = 10;
             }
             else
@@ -58,18 +59,15 @@ void reconnect()
     }
 }
 
-void subscribe_to_topic(const char *topic)
-{
-    client.subscribe(topic);
-}
-
-void sendMqttMsg(String topic, byte *payload)
+void sendMqttMsg(String topic, String payload)
 {
     if (client.connected())
     {
+        client.publish(topic.c_str(), payload.c_str());
     }
     else
     {
         reconnect();
+        client.publish(topic.c_str(), payload.c_str());
     }
 }

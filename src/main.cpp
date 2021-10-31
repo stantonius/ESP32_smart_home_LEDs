@@ -16,7 +16,9 @@ TaskHandle_t TaskFastLED;
 void codeForTaskRunBLEChecks(void *parameter)
 {
     for (;;)
+
     {
+        client.loop();
         doBLEScans(pBLEScan);
         if (pBLEScan->isScanning() == false)
         {
@@ -26,11 +28,17 @@ void codeForTaskRunBLEChecks(void *parameter)
 
         if (deviceProximityHolder.sum() == 0)
         {
-            if (isCloseVal)
-            {
-                isCloseVal = !isCloseVal;
-            }
-            LOG("TRIGGERED");
+            // if (isCloseVal)
+            // {
+            //     isCloseVal = !isCloseVal;
+            // }
+            // LOG("TRIGGERED");
+            sendMqttMsg("BeaconProximity", "IM NOT CLOSE");
+        }
+        else
+        {
+            // LOG("NOT TRIGGERED");
+            sendMqttMsg("BeaconProximity", "CLOSER THAN YOU THINK");
         }
     }
 }
@@ -49,7 +57,7 @@ void setup()
 
     setup_wifi();
     client.setServer(mqtt_server, mqtt_port);
-    // client.setCallback(callback);
+    client.setCallback(callback);
 
     if (!client.connected())
     {
@@ -57,8 +65,6 @@ void setup()
     }
 
     pBLEScan = scanBLESetup();
-
-    client.loop();
 
     lightSetups();
 

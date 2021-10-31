@@ -5,12 +5,14 @@
 #include <NimBLEDevice.h>
 #include "NimBLEBeacon.h"
 #include <sstream>
+#include "device_proximity_holder.h"
+#include <unordered_set>
 
 using namespace std;
 
 #define LOG(x) cout << x << endl
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
-#define rssiThreshold -90
+#define rssiThreshold -100
 
 NimBLEScan *pBLEScan;
 
@@ -18,6 +20,10 @@ NimBLEScan *pBLEScan;
 QueueHandle_t isCloseQueue;
 
 bool isCloseVal = 0;
+DeviceProximityHolder deviceProximityHolder;
+
+// Create an empty unordered_set to store the results for each scan
+unordered_set<int> scanResults;
 
 /*
 * Code taken from:
@@ -27,32 +33,29 @@ bool isCloseVal = 0;
 https://github.com/h2zero/NimBLE-Arduino/blob/master/examples/BLE_Beacon_Scanner/BLE_Beacon_Scanner.ino
 */
 
-int scanTime = 10;
+int scanTime = 5;
 #define SERVICE_UUID "c8c706b9-879a-4682-ba7f-56346f4d800e"
 
 static NimBLEUUID dataUuid(SERVICE_UUID);
-// static NimBLEAdvertising *pAdvertising = NimBLEDevice::getAdvertising();
-// static uint32_t counter = 0;
 
 class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
 {
+
     void onResult(NimBLEAdvertisedDevice *advertisedDevice)
     {
-        if (advertisedDevice->haveName())
-        {
-            Serial.print("Device name: ");
-            Serial.println(advertisedDevice->getName().c_str());
-            Serial.println("");
-        }
 
-        if (advertisedDevice->haveServiceUUID())
-        {
-            BLEUUID devUUID = advertisedDevice->getServiceUUID();
-            Serial.print("Found ServiceUUID: ");
-            Serial.println(devUUID.toString().c_str());
-            Serial.println("");
-        }
-        else
+        // store whether ibeacon was found and return result at end of callback
+        // start off assuming the beacon is not close
+        int beaconPresent = 0;
+
+        if (!advertisedDevice->haveServiceUUID())
+        // {
+        //     // BLEUUID devUUID = advertisedDevice->getServiceUUID();
+        //     // Serial.print("Found ServiceUUID: ");
+        //     // Serial.println(devUUID.toString().c_str());
+        //     // Serial.println("");
+        // }
+        // else
         {
             if (advertisedDevice->haveManufacturerData() == true)
             {
@@ -73,29 +76,20 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                     {
                         if (advertisedDevice->getRSSI() > rssiThreshold)
                         {
-                            // lighter(true);
                             if (!isCloseVal)
                             {
                                 isCloseVal = true;
                             }
+                            beaconPresent = 1;
                         }
                         else
                         {
-                            // lighter(false);
                             isCloseVal = false;
                         }
-                        // xQueueSend(isCloseQueue, &isCloseVal, portMAX_DELAY);
-                    }
-                    else
-                    {
-                        isCloseVal = false;
                     }
                 }
             }
-            else
-            {
-                isCloseVal = false;
-            }
+            scanResults.emplace(beaconPresent);
             return;
         }
     };
@@ -119,10 +113,33 @@ scanBLESetup()
 
 void doBLEScans(NimBLEScan *pScan)
 {
-    // Get results of scan;
+    /* 
+    * Get results of scan;
+    * Note that the scan results each trigger the callback when there are results regardless if its a beacon
+    * Therefore we need to:
+    * 1. Empty unordered_set to store the results for each scan
+    * 2. Check the set to see if it includes a beacon
+    * */
+    scanResults.clear();
+
     NimBLEScanResults foundDevices = pScan->start(scanTime, false);
+
+    if (scanResults.find(1) != scanResults.end())
+    {
+        deviceProximityHolder.add(1);
+        Serial.println("Beacon presence recorded");
+    }
+    else
+    {
+        deviceProximityHolder.add(0);
+        Serial.println("No beacon presence recorded");
+    };
+
     Serial.print("Devices found: ");
     Serial.println(foundDevices.getCount());
+    Serial.println("THE SUM IS: ");
+    Serial.println(scanResults.size());
+
     // non-zero devices found
     pScan->clearResults(); // delete results fromBLEScan buffer to release memory
 }

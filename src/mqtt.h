@@ -20,18 +20,6 @@ void callback(char *topic, byte *payload, unsigned int length)
         Serial.print((char)payload[i]);
     }
     Serial.println();
-
-    // Switch on the LED if an 1 was received as first character
-    if ((char)payload[0] == '1')
-    {
-        digitalWrite(BUILTIN_LED, HIGH); // Turn the LED on (Note that LOW is the voltage level
-                                         // but actually the LED is on; this is because
-                                         // it is active low on the ESP-01)
-    }
-    else
-    {
-        digitalWrite(BUILTIN_LED, LOW); // Turn the LED off by making the voltage HIGH
-    }
 }
 
 void reconnect()
@@ -67,5 +55,21 @@ void reconnect()
         // Serial.println(" Going to sleep");
         // delay(100);
         // ESP.deepSleep(MINUTES_BETWEEN * 30e6);
+    }
+}
+
+void subscribe_to_topic(const char *topic)
+{
+    client.subscribe(topic);
+}
+
+void sendMqttMsg(String topic, byte *payload)
+{
+    if (client.connected())
+    {
+    }
+    else
+    {
+        reconnect();
     }
 }

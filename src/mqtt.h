@@ -58,6 +58,11 @@ void reconnect()
     }
 }
 
+void subscribe_to_topic(const char *topic)
+{
+    client.subscribe(topic);
+}
+
 void sendMqttMsg(String topic, byte *payload)
 {
     if (client.connected())

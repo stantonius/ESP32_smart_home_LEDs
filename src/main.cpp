@@ -24,14 +24,14 @@ void codeForTaskRunBLEChecks(void *parameter)
             doBLEScans(pBLEScan);
         }
 
-        // if (beaconReadingsQueue.sum() == 0)
-        // {
-        //     if (isCloseVal)
-        //     {
-        //         isCloseVal = !isCloseVal;
-        //     }
-        //     LOG("TRIGGERED");
-        // }
+        if (deviceProximityHolder.sum() == 0)
+        {
+            if (isCloseVal)
+            {
+                isCloseVal = !isCloseVal;
+            }
+            LOG("TRIGGERED");
+        }
     }
 }
 

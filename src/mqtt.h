@@ -15,11 +15,21 @@ void callback(char *topic, byte *payload, unsigned int length)
     Serial.print("Message arrived [");
     Serial.print(topic);
     Serial.print("] ");
+    char holderArr[length + 1];
     for (int i = 0; i < length; i++)
     {
-        Serial.print((char)payload[i]);
+        holderArr[i] = (char)payload[i];
     }
-    Serial.println();
+    holderArr[length] = NULL;
+    if (strcmp(holderArr, "on") == 0)
+    {
+        isCloseVal = true;
+        Serial.println("ON");
+    }
+    else
+    {
+        isCloseVal = false;
+    }
 }
 
 void reconnect()

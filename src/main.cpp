@@ -7,18 +7,19 @@
 #include <mqtt.h>
 
 /**
- * Apparently tasks 
-*/
+ * Apparently tasks
+ */
 
 TaskHandle_t TaskRunBLEChecks;
 TaskHandle_t TaskFastLED;
 
 void codeForTaskRunBLEChecks(void *parameter)
 {
+
     for (;;)
 
     {
-        client.loop();
+
         doBLEScans(pBLEScan);
         if (pBLEScan->isScanning() == false)
         {
@@ -33,12 +34,12 @@ void codeForTaskRunBLEChecks(void *parameter)
             //     isCloseVal = !isCloseVal;
             // }
             // LOG("TRIGGERED");
-            sendMqttMsg("BeaconProximity", "IM NOT CLOSE");
+            sendMqttMsg("BeaconProximity", "no");
         }
         else
         {
             // LOG("NOT TRIGGERED");
-            sendMqttMsg("BeaconProximity", "CLOSER THAN YOU THINK");
+            sendMqttMsg("BeaconProximity", "yes");
         }
     }
 }
@@ -47,6 +48,7 @@ void codeForTaskFastLED(void *parameter)
 {
     for (;;)
     {
+        client.loop();
         lighter(isCloseVal);
     }
 }

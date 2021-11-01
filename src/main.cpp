@@ -5,6 +5,7 @@
 #include <ble.h>
 #include <wifi_connector.h>
 #include <mqtt.h>
+#include <chrono>
 
 /**
  * Apparently tasks
@@ -49,6 +50,7 @@ void codeForTaskFastLED(void *parameter)
     for (;;)
     {
         client.loop();
+        sleep(50);
         lighter(isCloseVal);
     }
 }

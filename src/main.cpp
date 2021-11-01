@@ -4,7 +4,7 @@
 #include <lights.h>
 #include <ble.h>
 #include <wifi_connector.h>
-#include <mqtt.h>
+#include <mqtt2.h>
 
 /**
  * Apparently tasks 
@@ -17,21 +17,25 @@ void codeForTaskRunBLEChecks(void *parameter)
 {
     for (;;)
     {
-        doBLEScans(pBLEScan);
         if (pBLEScan->isScanning() == false)
         {
             // Start scan with: duration = 0 seconds(forever), no scan end callback, not a continuation of a previous scan.
             doBLEScans(pBLEScan);
+            delay(100);
         }
-
         if (deviceProximityHolder.sum() == 0)
         {
             if (isCloseVal)
             {
                 isCloseVal = !isCloseVal;
             }
-            LOG("TRIGGERED");
+            mqttClient.publish("BeaconProximity", 0, false, "no");
         }
+        else
+        {
+            mqttClient.publish("BeaconProximity", 0, false, "yes");
+        }
+        delay(100);
     }
 }
 
@@ -47,18 +51,9 @@ void setup()
 {
     Serial.begin(115200);
 
-    setup_wifi();
-    client.setServer(mqtt_server, mqtt_port);
-    // client.setCallback(callback);
-
-    if (!client.connected())
-    {
-        reconnect();
-    }
+    mqttSetups();
 
     pBLEScan = scanBLESetup();
-
-    client.loop();
 
     lightSetups();
 

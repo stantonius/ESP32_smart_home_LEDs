@@ -19,6 +19,10 @@ AsyncMqttClient mqttClient;
 TimerHandle_t mqttReconnectTimer;
 TimerHandle_t wifiReconnectTimer;
 
+std::map<String, const char *> mqttTopicMap = {
+    {"statusOn", "Lights/ON"},
+};
+
 void connectToWifi()
 {
     Serial.println("Connecting to Wi-Fi...");
@@ -55,9 +59,12 @@ void onMqttConnect(bool sessionPresent)
     Serial.println("Connected to MQTT.");
     Serial.print("Session present: ");
     Serial.println(sessionPresent);
-    uint16_t packetIdSub = mqttClient.subscribe("Lights/status", 0);
+    uint16_t packetIdSub = mqttClient.subscribe(mqttTopicMap["statusOn"], 0);
     Serial.print("Subscribing at QoS 0, packetId: ");
     Serial.println(packetIdSub);
+    // uint16_t packetIdSub2 = mqttClient.subscribe(mqttTopicMap["manual"], 0);
+    // Serial.print("Subscribing at QoS 0, packetId: ");
+    // Serial.println(packetIdSub2);
     // mqttClient.publish("test/lol", 0, true, "test 1");
     // Serial.println("Publishing at QoS 0");
     // uint16_t packetIdPub1 = mqttClient.publish("test/lol", 1, true, "test 2");
@@ -96,21 +103,29 @@ void onMqttUnsubscribe(uint16_t packetId)
 
 void onMqttMessage(char *topic, char *payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total)
 {
-    Serial.println("Publish received.");
-    Serial.print("  topic: ");
-    Serial.println(topic);
-    Serial.print("  qos: ");
-    Serial.println(properties.qos);
-    Serial.print("  dup: ");
-    Serial.println(properties.dup);
-    Serial.print("  retain: ");
-    Serial.println(properties.retain);
-    Serial.print("  len: ");
-    Serial.println(len);
-    Serial.print("  index: ");
-    Serial.println(index);
-    Serial.print("  total: ");
-    Serial.println(total);
+    // check the docs for many more variables accessible in this callback
+    // below processes every payload and stores it as a message array
+    char message[len + 1];
+    for (int i = 0; i < len; i++)
+    {
+        message[i] = payload[i];
+    }
+    message[len] = '\0';
+    Serial.print("  payload: ");
+    Serial.println(message);
+
+    // unfortunately cannot use enums so must using boring if/else
+    if (strcmp(topic, mqttTopicMap["statusOn"]) == 0)
+    {
+        if (strcmp(message, "true") == 0)
+        {
+            isCloseVal = true;
+        }
+        else if (strcmp(message, "false") == 0)
+        {
+            isCloseVal = false;
+        }
+    }
 }
 
 void onMqttPublish(uint16_t packetId)

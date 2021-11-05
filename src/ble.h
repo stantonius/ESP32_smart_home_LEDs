@@ -80,16 +80,16 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                     {
                         if (advertisedDevice->getRSSI() > rssiThreshold)
                         {
-                            if (!isCloseVal)
-                            {
-                                isCloseVal = true;
-                            }
+                            // if (!isCloseVal)
+                            // {
+                            //     isCloseVal = true;
+                            // }
                             beaconPresent = 1;
                         }
-                        else
-                        {
-                            isCloseVal = false;
-                        }
+                        // else
+                        // {
+                        //     isCloseVal = false;
+                        // }
                     }
                 }
             }

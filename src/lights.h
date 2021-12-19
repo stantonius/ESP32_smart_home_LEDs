@@ -1,34 +1,44 @@
 #pragma once
 #include <FastLED.h>
 
+// https://github.com/FastLED/FastLED/blob/master/examples/ColorPalette/ColorPalette.ino
+// https://github.com/FastLED/FastLED/blob/master/examples/Pride2015/Pride2015.ino
+
 // How many leds in your pixels?
 #define NUM_LEDS 68
 #define DATA_PIN 33
 #define BRIGHTNESS 125
 
+#define UPDATES_PER_SECOND 20
+
 CRGB leds[NUM_LEDS];
-uint8_t paletteIndex = 0;
+uint8_t colourIndex[NUM_LEDS];
 
-uint8_t hue = 200;
-
-// Gradient palette "bhw1_01_gp", originally from
-// http://soliton.vm.bytemark.co.uk/pub/cpt-city/bhw/bhw1/tn/bhw1_01.png.index.html
-// converted for FastLED with gammas (2.6, 2.2, 2.5)
-// Size: 12 bytes of program space.
-
-DEFINE_GRADIENT_PALETTE(bhw1_01_gp){
-    0, 150, 55, 214,
-    227, 253, 29, 29,
-    255, 150, 55, 214};
-
-CRGBPalette16 myPal = bhw1_01_gp;
+uint8_t hue;
 
 void lightSetups()
 {
-    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS).setCorrection(0xFFB0F0);
+    // FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS).setCorrection(0xFFB0F0);
+    FastLED.addLeds<WS2812B, DATA_PIN, GRB>(leds, NUM_LEDS);
     FastLED.setBrightness(BRIGHTNESS);
     FastLED.setCorrection(TypicalLEDStrip);
     // FastLED.setTemperature(FullSpectrumFluorescent);
+    hue = random8(198, 250);
+}
+
+void simple()
+{
+    for (int i = 0; i < NUM_LEDS; i++)
+    {
+        leds[i] = CHSV(hue, 255, 100);
+    }
+
+    EVERY_N_SECONDS(2)
+    {
+        hue = random8(198, 250);
+    }
+
+    FastLED.show();
 }
 
 void pride()
@@ -42,8 +52,8 @@ void pride()
     uint16_t brightnessthetainc16 = beatsin88(203, (25 * 256), (40 * 256));
     uint8_t msmultiplier = beatsin88(147, 23, 60);
 
-    uint16_t hue16 = sHue16; //gHue * 256;
-    uint16_t hueinc16 = beatsin88(113, 1, 3000);
+    uint16_t hue16 = sHue16; // gHue * 256;
+    uint16_t hueinc16 = beatsin88(113, 198, 250);
 
     uint16_t ms = millis();
     uint16_t deltams = ms - sLastMillis;
@@ -55,7 +65,7 @@ void pride()
     for (uint16_t i = 0; i < NUM_LEDS; i++)
     {
         hue16 += hueinc16;
-        uint8_t hue8 = hue16 / 256;
+        uint8_t hue8 = hueinc16;
 
         brightnesstheta16 += brightnessthetainc16;
         uint16_t b16 = sin16(brightnesstheta16) + 32768;
@@ -73,10 +83,36 @@ void pride()
     }
 }
 
+void blurry()
+{
+    uint8_t sinBeat = beatsin8(30, 0, NUM_LEDS - 1, 0, 0);
+    uint8_t sinBeat2 = beatsin8(30, 0, NUM_LEDS - 1, 0, 85);
+    uint8_t sinBeat3 = beatsin8(30, 0, NUM_LEDS - 1, 0, 170);
+
+    leds[sinBeat] = CHSV(random8(198, 250), 255, 100);
+    leds[sinBeat2] = CHSV(random8(198, 250), 255, 100);
+    leds[sinBeat3] = CHSV(random8(198, 250), 255, 100);
+
+    EVERY_N_MILLISECONDS(25)
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            blur1d(leds, NUM_LEDS, 50);
+        }
+    }
+
+    // fadeToBlackBy(leds, NUM_LEDS, 10);
+
+    FastLED.show();
+}
+
 void lighter(bool show)
 {
     if (show)
     {
+
+        // simple();
+        // blurry();
 
         pride();
         FastLED.show();

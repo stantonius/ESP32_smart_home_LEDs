@@ -12,7 +12,7 @@ using namespace std;
 
 #define LOG(x) cout << x << endl
 #define ENDIAN_CHANGE_U16(x) ((((x)&0xFF00) >> 8) + (((x)&0xFF) << 8))
-#define rssiThreshold -100
+#define rssiThreshold -90
 
 NimBLEScan *pBLEScan;
 
@@ -118,14 +118,14 @@ scanBLESetup()
 
 void doBLEScans(NimBLEScan *pScan)
 {
-    /* 
-    * Get results of scan;
-    * Note that the scan results each trigger the callback when there are results regardless if its a beacon
-    * Therefore we need to:
-    * 1. Empty unordered_set to store the results for each scan
-    * 2. Check the set to see if it includes a beacon
-    * 3. If a beacon is found, add 1 to the holder vector; if not, add 0 to the holder vector
-    * */
+    /*
+     * Get results of scan;
+     * Note that the scan results each trigger the callback when there are results regardless if its a beacon
+     * Therefore we need to:
+     * 1. Empty unordered_set to store the results for each scan
+     * 2. Check the set to see if it includes a beacon
+     * 3. If a beacon is found, add 1 to the holder vector; if not, add 0 to the holder vector
+     * */
     scanResults.clear();
 
     NimBLEScanResults foundDevices = pScan->start(scanTime, false);

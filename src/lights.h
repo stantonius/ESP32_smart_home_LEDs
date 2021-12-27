@@ -26,23 +26,9 @@ void lightSetups()
     hue = random8(198, 250);
 }
 
-void simple()
-{
-    for (int i = 0; i < NUM_LEDS; i++)
-    {
-        leds[i] = CHSV(hue, 255, 100);
-    }
-
-    EVERY_N_SECONDS(2)
-    {
-        hue = random8(198, 250);
-    }
-
-    FastLED.show();
-}
-
 void pride()
 {
+    // tweaked from official FastLED example - some code may no longer be needed
     static uint16_t sPseudotime = 0;
     static uint16_t sLastMillis = 0;
     static uint16_t sHue16 = 0;
@@ -83,37 +69,10 @@ void pride()
     }
 }
 
-void blurry()
-{
-    uint8_t sinBeat = beatsin8(30, 0, NUM_LEDS - 1, 0, 0);
-    uint8_t sinBeat2 = beatsin8(30, 0, NUM_LEDS - 1, 0, 85);
-    uint8_t sinBeat3 = beatsin8(30, 0, NUM_LEDS - 1, 0, 170);
-
-    leds[sinBeat] = CHSV(random8(198, 250), 255, 100);
-    leds[sinBeat2] = CHSV(random8(198, 250), 255, 100);
-    leds[sinBeat3] = CHSV(random8(198, 250), 255, 100);
-
-    EVERY_N_MILLISECONDS(25)
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            blur1d(leds, NUM_LEDS, 50);
-        }
-    }
-
-    // fadeToBlackBy(leds, NUM_LEDS, 10);
-
-    FastLED.show();
-}
-
 void lighter(bool show)
 {
     if (show)
     {
-
-        // simple();
-        // blurry();
-
         pride();
         FastLED.show();
     }

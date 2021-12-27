@@ -71,7 +71,6 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                     BLEBeacon oBeacon = BLEBeacon();
                     oBeacon.setData(strManufacturerData);
                     Serial.printf("iBeacon Frame\n");
-                    // Serial.printf("ID: %04X Major: %d Minor: %d UUID: %s Power: %d\n", oBeacon.getManufacturerId(), ENDIAN_CHANGE_U16(oBeacon.getMajor()), ENDIAN_CHANGE_U16(oBeacon.getMinor()), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
                     Serial.printf("ID: %04X UUID: %s Power: %d\n", oBeacon.getManufacturerId(), oBeacon.getProximityUUID().toString().c_str(), oBeacon.getSignalPower());
                     Serial.printf("RSSI: %i", advertisedDevice->getRSSI());
 
@@ -81,16 +80,8 @@ class MyAdvertisedDeviceCallbacks : public NimBLEAdvertisedDeviceCallbacks
                     {
                         if (advertisedDevice->getRSSI() > rssiThreshold)
                         {
-                            // if (!isCloseVal)
-                            // {
-                            //     isCloseVal = true;
-                            // }
                             beaconPresent = 1;
                         }
-                        // else
-                        // {
-                        //     isCloseVal = false;
-                        // }
                     }
                 }
             }

@@ -4,7 +4,7 @@
 #include <lights.h>
 #include <ble.h>
 #include <wifi_connector.h>
-#include <mqtt2.h>
+#include <mqtt.h>
 
 TaskHandle_t TaskRunBLEChecks;
 TaskHandle_t TaskFastLED;
